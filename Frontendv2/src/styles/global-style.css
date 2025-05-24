@@ -1,0 +1,55 @@
+/* 全局样式文件 - 可混用 */
+
+/* 基础圆角 */
+.rounded-2xl {
+    border-radius: 1rem;
+  }
+  
+  /* 阴影 */
+  .shadow-md {
+    box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 玻璃拟态效果 */
+  .glass-effect {
+    backdrop-filter: blur(1rem);
+    background: rgba(255, 255, 255, 0.2);
+    border: 0.1rem solid rgba(255, 255, 255, 0.3);
+  }
+  
+  /* 常用内外边距 */
+  .p-4 {
+    padding: 1rem;
+  }
+  .m-4 {
+    margin: 1rem;
+  }
+  
+  /* Flex布局 */
+  .flex {
+    display: flex;
+  }
+  .justify-between {
+    justify-content: space-between;
+  }
+  .items-center {
+    align-items: center;
+  }
+  
+  /* 上传容器 */
+  .upload-container {
+    @apply m-4 p-4 rounded-2xl shadow-md glass-effect;
+  }
+  
+  /* 上传按钮美化 */
+  .upload-box .ant-btn {
+    font-size: 1.2rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.6rem;
+    transition: all 0.3s ease;
+  }
+  .upload-box .ant-btn:hover {
+    transform: translateY(-0.1rem);
+    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.15);
+  }
+  
