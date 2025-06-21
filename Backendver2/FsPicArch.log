@@ -1,0 +1,26 @@
+2025-05-31 19:52:55,735 - __main__ - ERROR - 邮件发送失败: name 'EMAIL_CONFIG' is not defined
+Traceback (most recent call last):
+  File "C:\Users\cyxba\Project\FsPicArch\Backendver2\core.py", line 90, in send_dfnr_email
+    smtp.sendmail(EMAIL_CONFIG['username'], [to], msg.as_string())
+                  ^^^^^^^^^^^^
+NameError: name 'EMAIL_CONFIG' is not defined
+2025-05-31 19:54:27,118 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 19:57:21,898 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 19:57:45,851 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 19:58:22,554 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 19:59:05,800 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:02:15,556 - __main__ - ERROR - VERICODE类型缺少必填参数：change_time
+2025-05-31 20:02:38,673 - __main__ - ERROR - VERICODE类型缺少必填参数：change_time
+2025-05-31 20:03:04,060 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:04:20,246 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:10:26,258 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:12:17,469 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:13:08,393 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:14:33,998 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:16:18,142 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:18:24,176 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:18:55,199 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:19:09,553 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:19:40,130 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:20:57,330 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
+2025-05-31 20:23:42,195 - __main__ - INFO - 邮件发送成功: 类型=VERICODE, 收件人=nninnos@163.com
