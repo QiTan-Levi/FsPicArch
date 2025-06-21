@@ -7,7 +7,10 @@ from data_model import UserRegister, UserInfo, AvatarUpdate
 from config import Config
 from utils.Security import hash_password
 from service.SQLsvc import DatabaseService
+from service.Email import send_email
 from router.OAuth2 import get_current_user
+from utils.File import FileService
+import datetime
 
 router = APIRouter(
     prefix="/users",
@@ -41,7 +44,6 @@ async def register(user: UserRegister, conn = Depends(DatabaseService.get_db_con
         'username': user.username,
         'password': hash_password(user.password),
         'email': user.email,
-        'avatar': user.avatar,
         'bio': user.bio
     }
     new_user = DatabaseService.create_user(conn, user_data)
@@ -102,47 +104,106 @@ async def update_user_info(
     current_user: dict = Depends(get_current_user),
     conn = Depends(DatabaseService.get_db_connection)
 ):
-    # 检查是否尝试更新 avatar 字段
+    # 获取更新前的用户信息
+    old_user_info = DatabaseService.execute_query(
+        conn,
+        """
+        SELECT username, email, bio 
+        FROM users WHERE id = %s
+        """,
+        (current_user["id"],)
+    )[0]
+
+    # 构建更新语句
+    update_fields = []
+    update_values = []
+    allowed_fields = ["username", "email", "bio"]
+    changed_fields = {}
+
+    for field, value in user_update.items():
+        if field in allowed_fields:
+            # 只记录实际发生变化的字段
+            if str(old_user_info[field]) != str(value):
+                update_fields.append(f"{field} = %s")
+                update_values.append(value)
+                changed_fields[field] = (old_user_info[field], value)
+    
+    # 检查是否尝试更新不允许的字段
+    if not update_fields:
+        error_fields = [f"{field} 字段不允许更新" 
+                       for field in user_update 
+                       if field not in allowed_fields]
+        
+        if error_fields:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"更新失败: {', '.join(error_fields)}"
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="没有提供可更新的字段或新值与旧值相同"
+            )
+    
+    # 特殊字段检查
     if "avatar" in user_update:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="头像只能通过专门的/me/avatar端点更新"
         )
-    
-    # 构建更新语句
-    update_fields = []
-    update_values = []
-    for field, value in user_update.items():
-        if field in ["username", "email", "bio"]:  # 移除了 avatar
-            update_fields.append(f"{field} = %s")
-            update_values.append(value)
-    
-    if not update_fields:
+    if "password" in user_update:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="没有提供有效的更新字段"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="密码只能通过专门的/me/password端点更新"
         )
     
+    # 执行更新
     update_values.append(current_user["id"])
-    
     DatabaseService.execute_update(
         conn,
         f"UPDATE users SET {', '.join(update_fields)} WHERE id = %s",
         update_values
     )
-    
+        
     # 获取更新后的用户信息
     updated_user = DatabaseService.execute_query(
         conn,
         """
         SELECT id, username, email, avatar, approved_images_count, 
-               likes_received_count, uploads_count, account_level, registration_time
+            likes_received_count, uploads_count, account_level, registration_time
         FROM users WHERE id = %s
         """,
         (current_user["id"],)
-    )
-    
-    return updated_user[0]
+    )[0]
+
+    # 准备邮件模板变量（只包含实际变更的字段）
+    template_vars = {
+        "USER_NAME": updated_user["username"],
+        "NOTIFICATION_TYPE": "Account Changes",
+        "UPDATED_FIELDS": "\n".join([
+            f'<div class="data-row">'
+            f'<div class="data-label">{field}:</div>'
+            f'<div class="data-value">'
+            f'<span style="text-decoration: line-through; color: #a0aec0;">{old_value}</span> → '
+            f'<span class="highlight">{new_value}</span>'
+            f'</div>'
+            f'</div>'
+            for field, (old_value, new_value) in changed_fields.items()
+        ]),
+        "UPDATE_TIMESTAMP": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "SECURITY_MESSAGE": "If you did not make these changes, please contact adminstrator immediately.",
+        "CURRENT_YEAR": datetime.datetime.now().year,
+        "COMPANY_NAME": "Byinfo Group"
+    }
+    # 发送邮件通知（仅当有实际变更时）
+    if changed_fields:
+        send_email(
+            to_email=updated_user["email"],
+            subject="用户信息更新通知",
+            content=("info_upd", template_vars)  # 使用模板发送
+        )
+
+    return updated_user
 
 @router.put("/me/avatar", 
          response_model=UserInfo,
@@ -153,72 +214,28 @@ async def update_user_avatar(
     current_user: dict = Depends(get_current_user),
     conn = Depends(DatabaseService.get_db_connection)
 ):
-    # 验证文件类型
-    allowed_types = ["image/jpeg", "image/png"]
-    if avatar.content_type not in allowed_types:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="只支持JPEG、PNG的图片"
-        )
-    
-    # 验证文件大小（例如限制为2MB）
-    MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
-    contents = await avatar.read()
-    if len(contents) > MAX_FILE_SIZE:
-        raise HTTPException(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            detail="头像文件大小不能超过2MB"
-        )
-    
-    # 验证文件扩展名
-    file_ext = avatar.filename.split('.')[-1].lower()
-    if file_ext not in ["jpg", "jpeg", "png"]:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="无效的文件扩展名"
-        )
-    
-    # 验证确实是图片文件（简单验证）
-    try:
-        from PIL import Image
-        import io
-        Image.open(io.BytesIO(contents)).verify()
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="无效的图片文件"
-        )
-    
-    # 生成唯一文件名
-    filename = f"{current_user['id']}.{file_ext}"  # 固定文件名，覆盖旧文件
-    file_path = os.path.join(AVATAR_DIR, filename)
-    
-    # 删除旧头像文件（如果存在）
+    # 获取旧头像路径
     old_avatar = DatabaseService.execute_query(
         conn,
         "SELECT avatar FROM users WHERE id = %s",
         (current_user["id"],)
     )
-    if old_avatar and old_avatar[0]["avatar"]:
-        old_path = old_avatar[0]["avatar"].lstrip('/')
-        try:
-            if os.path.exists(old_path):
-                os.remove(old_path)
-        except:
-            pass  # 如果删除旧文件失败，继续处理新文件
+    old_files = [old_avatar[0]["avatar"]] if old_avatar and old_avatar[0]["avatar"] else None
     
-    # 保存新文件
+    # 使用FileService处理文件上传
     try:
-        with open(file_path, "wb") as f:
-            f.write(contents)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"保存头像文件时出错: {str(e)}"
+        file_path = await FileService.handle_file_upload(
+            file=avatar,
+            file_type="avatar",
+            upload_dir=AVATAR_DIR,
+            old_files=old_files,
+            fixed_filename=str(current_user["id"])  # 使用用户ID作为固定文件名
         )
+    except HTTPException as e:
+        raise e
     
     # 更新数据库中的头像路径
-    avatar_url = f"/{AVATAR_DIR}/{filename}"
+    avatar_url = f"/{file_path}"
     DatabaseService.execute_update(
         conn,
         "UPDATE users SET avatar = %s WHERE id = %s",

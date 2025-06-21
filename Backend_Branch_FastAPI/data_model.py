@@ -11,7 +11,6 @@ class UserRegister(BaseModel):
     username: str
     password: str
     email: EmailStr
-    avatar: Optional[str] = None
     bio: Optional[str] = None
 
 class UserLogin(BaseModel):
@@ -36,23 +35,9 @@ class UserInfo(BaseModel):
     username: str
     email: str
     avatar: Optional[str] = None
-    approved_images_count: int = 0
-    likes_received_count: int = 0
-    uploads_count: int = 0
-    account_level: int = 1
-    registration_time: datetime
-    last_login: Optional[datetime] = None
     bio: Optional[str] = None
     personal_watermark: Optional[str] = None
-    medals_count: int = 0
-    permission_group: Optional[str] = None
-    status: int = 1
-    queue_limit: int = 5
-    image_view_level_limit: Optional[dict] = None
-    featured_count: int = 0
-    views_count: int = 0
-    unique_identifier: Optional[str] = None 
-    
+
     class Config:
         from_attributes = True
         json_encoders = {

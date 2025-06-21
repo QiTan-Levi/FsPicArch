@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Update Notification</title>
+    <style>
+        /* Unified Style Framework */
+        body {
+            font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0;
+            background-color: #f7fafc;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4299e1;
+            color: white;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .content {
+            padding: 25px;
+        }
+        .alert-badge {
+            display: inline-block;
+            background: #ebf8ff;
+            color: #3182ce;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .data-card {
+            background: #f8f9fa;
+            border-left: 3px solid #4299e1;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .data-row {
+            display: flex;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .data-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .data-label {
+            font-weight: 600;
+            width: 120px;
+            color: #4a5568;
+        }
+        .data-value {
+            flex: 1;
+        }
+        .highlight {
+            color: #dd6b20;
+            font-weight: 600;
+        }
+        .code {
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            letter-spacing: 3px;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #edf2f7;
+            border-radius: 4px;
+        }
+        .action-button {
+            display: block;
+            background-color: #4299e1;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 25px 0;
+        }
+        .security-note {
+            font-size: 13px;
+            color: #718096;
+            padding: 12px;
+            background: #fffaf0;
+            border-left: 3px solid #ed8936;
+            border-radius: 0 4px 4px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: #a0aec0;
+            font-size: 12px;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            {{NOTIFICATION_HEADER}}
+        </div>
+        
+        <div class="content">
+            <div class="alert-badge">
+                {{NOTIFICATION_TYPE}}
+            </div>
+            
+            <p>Dear {{USER_NAME}},</p>
+                       
+        {{UPDATE_BLOCK}}
+        <p>Your account information has been updated:</p>
+        <!-- <div class="data-card"> -->
+            <div class="data-card">
+                {{UPDATED_FIELDS | safe}}
+            </div>
+        <!-- </div> -->
+        <p class="timestamp">Updated at: {{UPDATE_TIMESTAMP}} UTC</p>
+        {{UPDATE_BLOCK}}
+            
+            <div class="security-note">
+                <strong>Security notice:</strong> {{SECURITY_MESSAGE}}
+            </div>
+            
+            {{ACTION_LINK}}
+            <a href="{{ACTION_LINK}}" class="action-button">{{ACTION_TEXT}}</a>
+            {{ACTION_LINK}}
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated message. Please do not reply.</p>
+            <p>&copy; {{CURRENT_YEAR}} {{COMPANY_NAME}}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

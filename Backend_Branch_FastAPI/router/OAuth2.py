@@ -60,29 +60,40 @@ async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     conn = Depends(DatabaseService.get_db_connection)
 ):
+    # 1. 检查用户是否存在
     users = DatabaseService.get_user_by_username(conn, form_data.username)
-    if not users or not verify_password(form_data.password, users[0]["password"]):
+    if not users:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="用户名或密码错误",
+            detail="用户不存在",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     user = users[0]
-    # 更新最后登录时间
+    
+    # 2. 检查密码是否正确
+    if not verify_password(form_data.password, user["password"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="密码错误",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # 3. 更新最后登录时间
     DatabaseService.execute_update(
         conn,
         "UPDATE users SET last_login = NOW() WHERE id = %s",
         (user["id"],)
     )
     
+    # 4. 生成访问令牌
     access_token_expires = timedelta(minutes=Config.TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user["username"]}, 
         expires_delta=access_token_expires
     )
     
-    # 设置 HttpOnly 的 cookie
+    # 5. 设置 HttpOnly 的 cookie
     response.set_cookie(
         key="access_token",
         value=f"Bearer {access_token}",
