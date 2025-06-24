@@ -1,4 +1,3 @@
-```markdown
 # FsPicArch 图片存档系统 - 后端服务
 
 ⭐ [![Stars](https://img.shields.io/github/stars/your-repo/FsPicArch?style=social)](https://github.com/your-repo/FsPicArch/stargazers)  
