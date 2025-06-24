@@ -1,10 +1,10 @@
-# FsPicArch 图片存档系统 - 后端服务
+# FsPicArch
 
 ## 🚀 5分钟快速启动
 
 ```bash
 # 克隆项目
-git clone https://github.com/your-repo/FsPicArch.git
+git clone https://github.com/QiTan-Levi/FsPicArch.git
 cd FsPicArch/Backend_FastAPI
 
 # 创建虚拟环境
@@ -46,11 +46,6 @@ JWT_SECRET = 'change_this_to_random_string'  # 必须修改！
 TOKEN_EXPIRE_MINUTES = 1440  # 24小时
 ```
 
-## 🐞 已知问题追踪
-- [#23](https://github.com/your-repo/FsPicArch/issues/23) 并发上传时偶发死锁
-- [#45](https://github.com/your-repo/FsPicArch/issues/45) 邮件服务SSL验证问题
-- [#67](https://github.com/your-repo/FsPicArch/issues/67) API响应时间优化
-
 ## 🤲 参与贡献
 1. Fork 仓库
 2. 创建分支 (`git checkout -b feat/your-feature`)
@@ -60,4 +55,3 @@ TOKEN_EXPIRE_MINUTES = 1440  # 24小时
 
 ## 📜 开源许可
 MIT Licensed | © 2025 FsPicArch Team
-```
