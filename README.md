@@ -1,193 +1,68 @@
-Add a well-structured README that provides clear guidance for both newcomers and experienced developers. The README should serve as a comprehensive guide for project understanding, setup, contribution, and future development.
-
-## Proposed README Structure
-
 ```markdown
-# Project Name
+# FsPicArch 图片存档系统 - 后端服务
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+⭐ [![Stars](https://img.shields.io/github/stars/your-repo/FsPicArch?style=social)](https://github.com/your-repo/FsPicArch/stargazers)  
+🐛 [Issues](https://github.com/your-repo/FsPicArch/issues)  
+🔄 [PRs Welcome](https://github.com/your-repo/FsPicArch/pulls)
 
-Brief but compelling project description that explains what your project does and why it's useful.
+## 🚀 5分钟快速启动
 
-## 🚀 Quick Start
-
-### Prerequisites
-- List of required software/tools with versions
-- Any system requirements
-
-### Installation
 ```bash
-# Basic installation steps
-git clone https://github.com/username/project.git
-cd project
-npm install  # or equivalent for your stack
+# 克隆项目
+git clone https://github.com/your-repo/FsPicArch.git
+cd FsPicArch/Backend_FastAPI
+
+# 创建虚拟环境
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 启动服务
+uvicorn main:app --reload
 ```
 
-### Basic Usage
-```bash
-# Simple example that works out of the box
-npm start
-```
+访问 `http://localhost:8000/docs` 查看交互式API文档
 
-## 📖 Detailed Documentation
+## 🌟 功能矩阵
 
-### Core Features
-- Feature 1: Description and basic usage
-- Feature 2: Description and basic usage
-- ...
+| 功能模块       | 状态 | 文档链接                  |
+|----------------|------|---------------------------|
+| 用户认证       | ✅   | [查看文档](#oauth2-api)   |
+| 图片上传       | 🚧   | [查看文档](#upload-api)   |
+| 数据统计       | ❌   | [计划中](#roadmap)        |
 
-### Configuration
-```json
-{
-  "key": "value",
-  // Example configuration with comments
+## ⚙️ 基础配置
+
+```python
+# config.py 关键配置
+DB_CONFIG = {
+    'host': '127.0.0.1',    # 数据库地址
+    'port': 3306,           # 数据库端口
+    'user': 'fspic_user',   # 数据库用户
+    'password': 'your_strong_password',  # 必须修改！
+    'database': 'fspicarch'
 }
+
+# JWT配置
+JWT_SECRET = 'change_this_to_random_string'  # 必须修改！
+TOKEN_EXPIRE_MINUTES = 1440  # 24小时
 ```
 
-### API Reference
-Detailed API documentation or link to API docs
+## 🐞 已知问题追踪
+- [#23](https://github.com/your-repo/FsPicArch/issues/23) 并发上传时偶发死锁
+- [#45](https://github.com/your-repo/FsPicArch/issues/45) 邮件服务SSL验证问题
+- [#67](https://github.com/your-repo/FsPicArch/issues/67) API响应时间优化
 
-## 🔧 Advanced Usage
+## 🤲 参与贡献
+1. Fork 仓库
+2. 创建分支 (`git checkout -b feat/your-feature`)
+3. 提交代码 (`git commit -am 'Add awesome feature'`)
+4. 推送分支 (`git push origin feat/your-feature`)
+5. 创建 Pull Request
 
-### Advanced Configuration
-- Deep dive into configuration options
-- Performance tuning
-- Security considerations
-
-### Integration Examples
-- Common integration scenarios
-- Best practices
-- Known limitations
-
-## 🛠️ Development
-
-### Project Structure
+## 📜 开源许可
+MIT Licensed | © 2025 FsPicArch Team
 ```
-project/
-├── src/
-│   ├── core/
-│   ├── modules/
-│   └── utils/
-├── tests/
-├── docs/
-└── config/
-```
-
-### Development Setup
-```bash
-# Development environment setup
-npm install --dev
-npm run dev
-```
-
-### Testing
-```bash
-npm test
-npm run e2e
-```
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how you can help:
-
-### For Beginners
-1. Fork the repository
-2. Set up your development environment
-3. Pick an issue labeled 'good first issue'
-4. Follow our coding standards
-5. Submit a PR
-
-### For Experienced Developers
-- Architecture improvements
-- Performance optimizations
-- New feature implementations
-- Security enhancements
-
-### Current Limitations and Future Roadmap
-- [ ] Feature A: Description of planned/needed feature
-- [ ] Performance: Areas needing optimization
-- [ ] Integration: Additional platform support needed
-- [ ] Testing: Areas needing better coverage
-
-## 🔄 Fork and Customize
-
-### Forking Guide
-1. Fork the repository
-2. Configure your environment
-3. Implement your changes
-4. Keep upstream sync
-```bash
-git remote add upstream https://github.com/original/repo.git
-git fetch upstream
-git merge upstream/main
-```
-
-### Customization Points
-- Configuration files location and format
-- Plugin system (if applicable)
-- Theming system (if applicable)
-- API extension points
-
-### Common Customization Scenarios
-- Adding new features
-- Modifying existing functionality
-- Integration with other systems
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- List of contributors
-- Third-party libraries used
-- Inspiration sources
-
-## 📞 Support
-
-- Issue tracker: GitHub Issues
-- Email: support@project.com
-- Discord/Slack community links
-```
-
-## Rationale for Structure
-
-1. **For Beginners:**
-   - Clear quick start section
-   - Step-by-step installation guide
-   - Basic usage examples
-   - Detailed documentation with examples
-   - Simple contribution guide
-
-2. **For Experienced Developers:**
-   - Architecture overview
-   - Advanced configuration options
-   - Known limitations
-   - Performance considerations
-   - Clear extension points
-   - Contribution guidelines for major features
-
-3. **For Project Growth:**
-   - Clear roadmap
-   - Listed limitations for potential PRs
-   - Detailed forking guide
-   - Customization documentation
-
-## Implementation Tasks
-
-1. [ ] Create the basic README structure
-2. [ ] Add project-specific installation steps
-3. [ ] Document core features and API
-4. [ ] Create contribution guidelines
-5. [ ] Add customization documentation
-6. [ ] Include license and support information
-
-## Additional Considerations
-
-- Ensure all code examples are tested and working
-- Include screenshots or GIFs for visual features
-- Maintain consistent formatting
-- Keep documentation up-to-date with code changes
-- Add badges for build status, coverage, etc.
-- Include links to related documentation
