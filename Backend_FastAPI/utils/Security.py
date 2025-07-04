@@ -18,11 +18,11 @@ def generate_token(user_id: str) -> str:
         'user_id': user_id,
         'exp': datetime.utcnow() + timedelta(minutes=Config.TOKEN_EXPIRE_MINUTES)
     }
-    return jwt.encode(payload, Config.JWT_SECRET, algorithm=Config.JWT_ALGORITHM)
+    return jwt.encode(payload, Config.JWT_SECRET_KEY, algorithm=Config.JWT_ALGORITHM)
 
 def decode_token(token: str) -> dict:
     """解码JWT令牌"""
     try:
-        return jwt.decode(token, Config.JWT_SECRET, algorithms=[Config.JWT_ALGORITHM])
+        return jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=[Config.JWT_ALGORITHM])
     except jwt.ExpiredSignatureError:
         return None

@@ -10,7 +10,7 @@ router = APIRouter(
 )
 
 # 基础静态文件目录
-STATIC_BASE_DIR = Config.STATIC_DIR
+STATIC_BASE_DIR = Config.STATIC_FILES_DIR
 
 @router.get("/statics/{folder}/{filename}",
            summary="获取静态文件",

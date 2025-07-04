@@ -29,9 +29,16 @@ class FileService:
             
         返回:
             str - 存储的文件路径(相对路径)
+            
+        功能:
+            1. 验证文件类型和大小
+            2. 处理图片文件验证
+            3. 生成文件名
+            4. 删除旧文件(如果提供)
+            5. 保存新文件
         """
         # 获取配置
-        config = Config.ALLOWED_FILE_TYPES.get(file_type)
+        config = Config.FILE_TYPE_RULES.get(file_type)
         if not config:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -56,7 +63,7 @@ class FileService:
             FileService._validate_image(contents)
         
         # 生成文件名
-        file_ext = file.filename.split('.')[-1].lower()
+        file_ext = file.filename.split('.')[-1].lower()  # 获取文件扩展名
         filename = FileService._generate_filename(file_ext, fixed_filename)
         
         # 确保上传目录存在
@@ -81,7 +88,16 @@ class FileService:
     
     @staticmethod
     def _validate_file(file: UploadFile, config: dict):
-        """验证文件类型和扩展名"""
+        """
+        验证文件类型和扩展名
+        
+        参数:
+            file: UploadFile - 上传的文件对象
+            config: dict - 文件类型配置
+            
+        功能:
+            检查文件的MIME类型和扩展名是否符合配置要求
+        """
         if file.content_type not in config["mime_types"]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -97,7 +113,15 @@ class FileService:
     
     @staticmethod
     def _validate_image(contents: bytes):
-        """验证是否是有效的图片文件"""
+        """
+        验证是否是有效的图片文件
+        
+        参数:
+            contents: bytes - 图片文件的二进制内容
+            
+        功能:
+            使用Pillow库验证图片文件是否有效
+        """
         try:
             Image.open(io.BytesIO(contents)).verify()
         except:
@@ -110,7 +134,17 @@ class FileService:
     def _generate_filename(file_ext: str, fixed_filename: Optional[str] = None) -> str:
         """
         生成文件名
-        如果有固定文件名，则使用固定文件名；否则生成UUID
+        
+        参数:
+            file_ext: str - 文件扩展名
+            fixed_filename: Optional[str] - 固定文件名(不包含扩展名)
+            
+        返回:
+            str - 生成的文件名
+            
+        功能:
+            如果有固定文件名，则使用固定文件名+扩展名
+            否则生成UUID作为文件名+扩展名
         """
         if fixed_filename:
             return f"{fixed_filename}.{file_ext}"
@@ -118,9 +152,17 @@ class FileService:
     
     @staticmethod
     def _delete_old_files(old_files: List[str]):
-        """删除旧文件"""
+        """
+        删除旧文件
+        
+        参数:
+            old_files: List[str] - 需要删除的旧文件路径列表
+            
+        功能:
+            遍历列表并删除每个文件，忽略删除过程中出现的错误
+        """
         for old_file in old_files:
-            old_path = old_file.lstrip('/')
+            old_path = old_file.lstrip('/')  # 移除路径开头的斜杠
             try:
                 if os.path.exists(old_path):
                     os.remove(old_path)
