@@ -1,14 +1,90 @@
-# API 开发 Checklist
+# FsPicArch - Backend 完整文档
 
-## 用户认证相关API
+## 🚀 快速启动
+
+```bash
+# 克隆项目
+git clone https://github.com/QiTan-Levi/FsPicArch.git
+cd FsPicArch/Backend_FastAPI
+
+# 创建虚拟环境
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 启动服务
+uvicorn main:app --reload
+```
+
+访问 `http://localhost:8000/docs` 查看交互式API文档
+
+## ⚙ 基础配置
+
+```python
+# config.py 关键配置
+DB_CONFIG = {
+    'host': '127.0.0.1',    # 数据库地址
+    'port': 3306,           # 数据库端口
+    'user': 'fspic_user',   # 数据库用户
+    'password': 'your_strong_password',  # 必须修改！
+    'database': 'fspicarch'
+}
+
+# JWT配置
+JWT_SECRET = 'change_this_to_random_string'  # 必须修改！
+TOKEN_EXPIRE_MINUTES = 1440  # 24小时
+```
+
+## 🌟 功能矩阵
+
+### 已实现功能
+
+#### 用户认证系统
+- OAuth2认证流程
+- 用户登录/登出
+- JWT令牌生成与验证
+- 密码哈希与验证
+
+#### 用户管理
+- 用户注册
+- 获取/更新用户信息
+- 头像上传
+- 用户注销
+
+#### 基础服务
+- 数据库服务
+- 文件上传处理
+- 邮件服务
+- 静态文件服务
+
+#### 系统基础
+- FastAPI应用框架
+- 配置管理系统
+- 数据库模型
+- API文档生成
+
+### 开发状态
+
+| 功能模块 | 状态 | 文档链接 |
+| -------- | ---- | -------- |
+| 用户认证 | ✅ | #用户认证系统 |
+| 图片上传 | 🚧 | #图片管理api |
+| 数据统计 | ❌ | #后续开发计划 |
+
+## API 开发 Checklist
+
+### 用户认证相关API
 - [x] `POST /register` - 用户注册
 - [x] `POST /login` - 用户登录
 - [x] `POST /logout` - 用户登出
 - [ ] `POST /verify-email` - 验证邮箱
 - [ ] `POST /forgot-password` - 忘记密码请求
 
-## 用户管理API
-### 用户信息
+### 用户管理API
+#### 用户信息
 - [ ] `GET ` - 获取用户列表(管理员)
 - [ ] `GET /{id}` - 获取特定用户信息
 - [ ] `GET /me` - 获取当前用户信息
@@ -17,12 +93,12 @@
 - [ ] `PATCH /{id}/permission` - 更新用户权限(管理员)
 - [ ] `DELETE /{id}` - 删除用户(管理员或自己)
 
-### 用户统计
+#### 用户统计
 - [ ] `GET /{id}/stats` - 获取用户统计数据
 - [ ] `GET /{id}/activity` - 获取用户活动摘要
 
-## 图片管理API
-### 航空图片
+### 图片管理API
+#### 航空图片
 - [ ] `POST /aviation-images` - 上传航空图片
 - [ ] `GET /aviation-images` - 获取航空图片列表
 - [ ] `GET /aviation-images/{id}` - 获取特定航空图片详情
@@ -30,7 +106,7 @@
 - [ ] `PATCH /aviation-images/{id}/status` - 更新审核状态(审图员)
 - [ ] `DELETE /aviation-images/{id}` - 删除航空图片
 
-### 铁路图片
+#### 铁路图片
 - [ ] `POST /railway-images` - 上传铁路图片
 - [ ] `GET /railway-images` - 获取铁路图片列表
 - [ ] `GET /railway-images/{id}` - 获取特定铁路图片详情
@@ -38,13 +114,13 @@
 - [ ] `PATCH /railway-images/{id}/status` - 更新审核状态(审图员)
 - [ ] `DELETE /railway-images/{id}` - 删除铁路图片
 
-### 图片通用操作
+#### 图片通用操作
 - [ ] `POST /images/{type}/{id}/like` - 点赞图片
 - [ ] `DELETE /images/{type}/{id}/like` - 取消点赞
 - [ ] `GET /images/{type}/{id}/comments` - 获取图片评论
 - [ ] `POST /images/{type}/{id}/comments` - 添加评论
 
-## 机位管理API
+### 机位管理API
 - [ ] `POST /spots` - 创建机位信息
 - [ ] `GET /spots` - 获取机位列表
 - [ ] `GET /spots/{id}` - 获取特定机位详情
@@ -52,14 +128,14 @@
 - [ ] `PATCH /spots/{id}/status` - 更新机位状态
 - [ ] `DELETE /spots/{id}` - 删除机位信息
 
-## 勋章管理API
+### 勋章管理API
 - [ ] `POST /medals` - 授予勋章(管理员)
 - [ ] `GET /{id}/medals` - 获取用户勋章列表
 - [ ] `GET /medals/{id}` - 获取特定勋章详情
 - [ ] `PATCH /medals/{id}/status` - 更新勋章状态(管理员)
 - [ ] `DELETE /medals/{id}` - 撤销勋章(管理员)
 
-## 许可证管理API
+### 许可证管理API
 - [ ] `POST /licenses` - 签发许可证(管理员)
 - [ ] `GET /{id}/licenses` - 获取用户许可证列表
 - [ ] `GET /licenses/{id}` - 获取特定许可证详情
@@ -67,7 +143,7 @@
 - [ ] `DELETE /licenses/{id}` - 撤销许可证(管理员)
 - [ ] `POST /licenses/{id}/use` - 使用许可证
 
-## 评论管理API
+### 评论管理API
 - [ ] `GET /comments/{id}` - 获取评论详情
 - [ ] `PUT /comments/{id}` - 更新评论
 - [ ] `PATCH /comments/{id}/status` - 更新评论状态
@@ -76,26 +152,84 @@
 - [ ] `DELETE /comments/{id}/like` - 取消点赞评论
 - [ ] `GET /comments/{id}/replies` - 获取评论回复
 
-## 申诉异议API
+### 申诉异议API
 - [ ] `POST /complaints` - 提交申诉或异议
 - [ ] `GET /complaints` - 获取申诉异议列表(管理员)
 - [ ] `GET /complaints/{id}` - 获取申诉异议详情
 - [ ] `PATCH /complaints/{id}/status` - 处理申诉异议(管理员)
 - [ ] `GET /{id}/complaints` - 获取用户申诉异议历史
 
-## 系统管理API
-### 系统日志
+### 系统管理API
+#### 系统日志
 - [ ] `GET /logs` - 获取系统日志(管理员)
 - [ ] `GET /logs/users/{id}` - 获取用户操作日志(管理员)
 
-### 未通过图片
+#### 未通过图片
 - [ ] `GET /rejected-images` - 获取未通过图片列表(管理员或所有者)
 - [ ] `GET /rejected-images/{id}` - 获取未通过图片详情
 - [ ] `POST /rejected-images/{id}/resubmit` - 重新提交图片
 - [ ] `POST /rejected-images/{id}/appeal` - 对拒绝结果申诉
 
-## 其他实用API
+### 其他实用API
 - [ ] `GET /search` - 全局搜索
 - [ ] `GET /tags` - 获取热门标签
 - [ ] `GET /stats` - 获取系统统计信息
 - [ ] `POST /contact` - 联系管理员
+
+### 🔧 优化建议
+
+#### 安全优化
+- 增加密码强度检查（注册时）
+- 实现JWT刷新令牌机制
+- 添加敏感操作的双因素认证
+- 实现登录失败锁定机制
+
+#### 性能优化
+- 数据库连接池（替换当前生成器方式）
+- 添加Redis缓存高频访问数据
+- 实现异步文件处理
+- 邮件发送队列化
+
+#### 代码结构优化
+- 将路由按功能模块拆分更细
+- 抽象通用CRUD操作
+- 统一异常处理机制
+- 添加API版本控制
+
+### 🚧 后续开发计划
+
+#### 第一阶段：完善基础功能（1-2周）
+- 邮箱验证
+- 密码重置流程
+- 用户资料完整度检查
+- 开发管理后台基础
+
+#### 第二阶段：核心业务功能（2-3周）
+- 实现航空/铁路图片上传
+- 开发图片预处理（压缩/水印）
+- 建立审核流程
+- 开发基础社交功能（点赞/评论/关注）
+
+#### 第三阶段：高级功能（3-4周）
+- 实现高级搜索
+- 推荐算法
+- 用户行为分析
+- 系统使用统计
+
+#### 第四阶段：优化与扩展
+- 数据库索引优化
+- 缓存策略
+- 负载测试
+- API第三方接入
+
+## 🤝 参与贡献
+
+1. Fork 仓库
+2. 创建分支 (`git checkout -b feat/your-feature`)
+3. 提交代码 (`git commit -am 'Add awesome feature'`)
+4. 推送分支 (`git push origin feat/your-feature`)
+5. 创建 Pull Request
+
+## 📜 开源许可
+
+MIT Licensed | © 2025 FsPicArch Team

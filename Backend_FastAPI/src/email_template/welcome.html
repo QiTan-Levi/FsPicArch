@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欢迎注册 FsPicArch</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0;
+            background-color: #f7fafc;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4299e1;
+            color: white;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .content {
+            padding: 25px;
+        }
+        .welcome-badge {
+            display: inline-block;
+            background: #ebf8ff;
+            color: #3182ce;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .action-button {
+            display: block;
+            background-color: #4299e1;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 25px 0;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: #3182ce;
+        }
+        .security-note {
+            font-size: 13px;
+            color: #718096;
+            padding: 12px;
+            background: #fffaf0;
+            border-left: 3px solid #ed8936;
+            border-radius: 0 4px 4px 0;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: #a0aec0;
+            font-size: 12px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .highlight {
+            font-weight: 600;
+            color: #2b6cb0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            欢迎注册 FsPicArch
+        </div>
+        
+        <div class="content">
+            <div class="welcome-badge">
+                新用户注册
+            </div>
+            
+            <p>亲爱的 <span class="highlight">{{USER_NAME}}</span>,</p>
+            
+            <p>感谢您注册 FsPicArch 服务！我们很高兴您能加入我们。</p>
+            
+            <p>请点击下方按钮验证您的邮箱地址，以完成注册流程：</p>
+            
+            <a href="{{VERIFICATION_LINK}}" class="action-button">验证我的邮箱</a>
+            
+            <p>如果按钮无法点击，请复制以下链接到浏览器地址栏访问：</p>
+            <p style="word-break: break-all; font-size: 13px; color: #4a5568;">{{VERIFICATION_LINK}}</p>
+            
+            <div class="security-note">
+                <strong>安全提示：</strong> 此链接将在24小时后失效。请不要将此链接分享给他人。如果您没有注册 FsPicArch，请忽略此邮件。
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>这是一封自动发送的邮件，请勿直接回复。</p>
+            <p>&copy; {{CURRENT_YEAR}} FsPicArch. 保留所有权利。</p>
+        </div>
+    </div>
+</body>
+</html>

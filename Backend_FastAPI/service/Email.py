@@ -4,7 +4,7 @@
 import smtplib  # SMTP协议库
 from email.mime.text import MIMEText  # 构建邮件正文
 from email.mime.multipart import MIMEMultipart  # 构建多部分邮件
-from config import Config  # 配置文件
+from src.config import Config  # 配置文件
 import ssl  # SSL加密
 from typing import Optional, Tuple, Dict, Union  # 类型提示
 import atexit  # 程序退出时的清理

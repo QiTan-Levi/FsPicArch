@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮箱验证成功 - Byinfo Group</title>
+    <style>
+        :root {
+            --primary: #4299e1;
+            --success: #48bb78;
+            --text: #2d3748;
+            --light-text: #718096;
+            --bg: #f7fafc;
+        }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text);
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            margin: 20px;
+        }
+        .logo {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+        .success-icon {
+            color: var(--success);
+            font-size: 72px;
+            margin: 10px 0;
+            animation: bounce 1s ease;
+        }
+        h1 {
+            color: var(--success);
+            margin: 15px 0;
+            font-weight: 600;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: var(--text);
+        }
+        .close-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 0;
+        }
+        .close-btn:hover {
+            background-color: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(66, 153, 225, 0.3);
+        }
+        .countdown {
+            margin: 20px 0;
+            font-size: 14px;
+            color: var(--light-text);
+        }
+        .countdown-number {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 12px;
+            color: var(--light-text);
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">        
+        <div class="success-icon">✓</div>
+        <h1>邮箱验证成功</h1>
+        <p>您的邮箱已验证成功，用户状态已更新为正常状态。</p>
+        
+        <button class="close-btn" onclick="safeWindowClose()">关闭页面</button>
+        
+        <div class="countdown">
+            此页面将在 <span class="countdown-number" id="countdown">60</span> 秒后自动关闭
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 Byinfo Group. 保留所有权利。</p>
+    </div>
+
+    <script>
+        // 60秒倒计时自动关闭
+        let seconds = 60;
+        const countdownElement = document.getElementById('countdown');
+        
+        const timer = setInterval(() => {
+            seconds--;
+            countdownElement.textContent = seconds;
+            
+            if (seconds <= 0) {
+                clearInterval(timer);
+                safeWindowClose();
+            }
+        }, 1000);
+        
+        // 安全的窗口关闭方法
+        function safeWindowClose() {
+            try {
+                // 尝试直接关闭窗口
+                if (window.opener || window.history.length <= 1) {
+                    window.close();
+                } else {
+                    // 如果无法关闭，跳转到首页或空白页
+                    window.location.href = 'about:blank';
+                }
+            } catch (e) {
+                // 捕获可能的异常
+                console.log("无法关闭窗口:", e);
+                document.querySelector('.close-btn').textContent = '无法自动关闭，请手动关闭此标签页';
+            }
+        }
+        
+        // 兼容性处理
+        window.onbeforeunload = function() {
+            if (seconds > 0) {
+                return "您确定要离开此页面吗？验证已完成，您可以安全关闭此页面。";
+            }
+        };
+    </script>
+</body>
+</html>

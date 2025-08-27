@@ -2,6 +2,8 @@
 from fastapi import FastAPI
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
+from fastapi.staticfiles import StaticFiles
+from src.config import Config
 
 # 初始化 FastAPI 应用
 app = FastAPI(
@@ -27,8 +29,10 @@ app.include_router(oauth2_router)  # 将OAuth2路由添加到应用
 from router.User import router as user_router  # 用户管理路由
 app.include_router(user_router)  # 将用户路由添加到应用
 
-from router.Static import router as static_router  # 静态文件路由
-app.include_router(static_router)  # 将静态文件路由添加到应用
+from router.Static import router as static_router  # 文件服务路由
+app.include_router(static_router)  # 注册文件服务路由
+
+app.mount("/static", StaticFiles(directory=Config.STATIC_FILES_DIR), name="static") # 挂载静态文件目录，使用配置
 
 # OpenAPI 配置函数
 def custom_openapi():
@@ -84,4 +88,11 @@ async def custom_swagger_ui_html():
 if __name__ == "__main__":
     import uvicorn
     # 使用uvicorn运行FastAPI应用
-    uvicorn.run(app, host="0.0.0.0", port=8000)  # 监听所有网络接口的8000端口
+    if Config.DEBUG_MODE:
+        uvicorn.run("main:app", host="0.0.0.0", 
+                    port=Config.MAIN_SERVICE_PORT, 
+                    reload=True,  # 启用热重载
+                    reload_dirs=["/"],  # 监视的目录
+                    reload_delay=2 )  # 重载延迟
+    else:
+        uvicorn.run(app, host="0.0.0.0", port=Config.MAIN_SERVICE_PORT)

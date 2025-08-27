@@ -1,14 +1,14 @@
 # OAuth2.py
+import hashlib
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import datetime, timedelta
 from typing import Optional
 import jwt as pyjwt
 from pydantic import BaseModel
-from data_model import TokenData, Token
-from config import Config
-from utils.Security import verify_password
-from service.SQLsvc import DatabaseService
+from src.data_model import TokenData, Token
+from src.config import Config
+from service.SQLsvc import execute_sql
 
 router = APIRouter(
     prefix="/oauth2",
@@ -16,6 +16,16 @@ router = APIRouter(
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="oauth2/token")
+
+def password_security(password: str, hashed: str = None) -> str | bool:
+    """2合1密码安全函数：
+    - 仅传password时返回哈希值
+    - 传password和hashed时返回校验结果
+    """
+    hashed_val = hashlib.sha256(password.encode()).hexdigest()
+    if hashed is None:
+        return hashed_val
+    return hashed_val == hashed
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     """创建访问令牌"""
@@ -29,7 +39,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme), 
-    conn = Depends(DatabaseService.get_db_connection)
 ):
     """获取当前用户"""
     credentials_exception = HTTPException(
@@ -46,7 +55,13 @@ async def get_current_user(
     except pyjwt.PyJWTError:
         raise credentials_exception
     
-    users = DatabaseService.get_user_by_username(conn, token_data.username)
+    users = execute_sql(
+        auto={
+            "op": "read",
+            "table": "users",
+            "where": {"username": token_data.username}
+        }
+    )
     if not users:
         raise credentials_exception
     return users[0]
@@ -58,10 +73,15 @@ async def get_current_user(
 async def login_for_access_token(
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
-    conn = Depends(DatabaseService.get_db_connection)
 ):
     # 1. 检查用户是否存在
-    users = DatabaseService.get_user_by_username(conn, form_data.username)
+    users = execute_sql(
+        auto={
+            "op": "read",
+            "table": "users",
+            "where": {"username": form_data.username}
+        }
+    )
     if not users:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -72,7 +92,7 @@ async def login_for_access_token(
     user = users[0]
     
     # 2. 检查密码是否正确
-    if not verify_password(form_data.password, user["password"]):
+    if not password_security(form_data.password, user["password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="密码错误",
@@ -80,10 +100,9 @@ async def login_for_access_token(
         )
 
     # 3. 更新最后登录时间
-    DatabaseService.execute_update(
-        conn,
-        "UPDATE users SET last_login = NOW() WHERE id = %s",
-        (user["id"],)
+    execute_sql(
+        query="UPDATE users SET last_login = NOW() WHERE id = %s",
+        params=(user["id"],)
     )
     
     # 4. 生成访问令牌
